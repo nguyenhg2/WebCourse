@@ -15,3 +15,12 @@ def get_db() -> AsyncIOMotorDatabase:
     if _db is None:
         _db = get_client()[settings.mongo_db]
     return _db
+
+def serialize_doc(doc: dict | None) -> dict | None:
+    if not doc:
+        return doc
+    doc["_id"] = str(doc["_id"])
+    return doc
+
+def serialize_docs(docs: list[dict]) -> list[dict]:
+    return [serialize_doc(d) for d in docs]
