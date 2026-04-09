@@ -1,3 +1,4 @@
+from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from app.core.config import settings
 
@@ -24,3 +25,6 @@ def serialize_doc(doc: dict | None) -> dict | None:
 
 def serialize_docs(docs: list[dict]) -> list[dict]:
     return [serialize_doc(d) for d in docs]
+
+def oid(value: str) -> ObjectId:
+    return ObjectId(value)
