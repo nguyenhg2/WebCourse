@@ -6,7 +6,6 @@ class CourseBase(BaseModel):
     description: str
     thumbnail: Optional[str] = None
     price: float = 0.0
-    instructor_id: str
     category: str
     rating: float = 0.0
 
