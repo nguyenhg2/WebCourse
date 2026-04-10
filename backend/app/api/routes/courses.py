@@ -28,3 +28,21 @@ async def create_course(payload: CourseCreate, db=Depends(get_db),user=Depends(r
     result = await db["courses"].insert_one(new_course)
     new_course = await db["courses"].find_one({"_id": result.inserted_id})
     return serialize_doc(new_course)
+
+@router.put("/api/courses/{course_id}", response_model=CourseResponse)
+async def update_course(course_id: str, payload: CourseCreate, db=Depends(get_db),user=Depends(require_role("admin"))):
+    update_data = payload.model_dump(exclude_unset=True)
+    if not update_data:
+        raise HTTPException(status_code=400, detail="Không có dữ liệu nào được cung cấp để cập nhật")
+    result = await db["courses"].update_one({"_id": ObjectId(course_id)}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy khóa học")
+    updated_course = await db["courses"].find_one({"_id": ObjectId(course_id)})
+    return serialize_doc(updated_course)
+
+@router.delete("/api/courses/{course_id}")
+async def delete_course(course_id: str, db=Depends(get_db),user=Depends(require_role("admin"))):
+    result = await db["courses"].delete_one({"_id": ObjectId(course_id)})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy khóa học")
+    return {"detail": "Khóa học đã được xóa"}

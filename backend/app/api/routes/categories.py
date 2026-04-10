@@ -5,5 +5,5 @@ router=APIRouter()
 
 @router.get("/api/categories")
 async def categories(db=Depends(get_db)):
-    categories = await db["categories"].find().to_list(length=100)
-    return serialize_docs(categories)
+    categories = await db["courses"].distinct("category")
+    return categories
