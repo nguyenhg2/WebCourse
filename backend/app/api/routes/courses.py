@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from app.models.common import Level
 from app.core.deps import require_role
 from app.db.mongo import get_db, serialize_doc, serialize_docs
 from app.models.courses import CourseCreate, CourseResponse
@@ -8,10 +9,12 @@ from bson import ObjectId
 router = APIRouter()
 
 @router.get("/api/courses", response_model=List[CourseResponse])
-async def get_courses(category: Optional[str] = None,db=Depends(get_db)):
+async def get_courses(category_id: Optional[str] = None, level: Optional[Level] = None, db=Depends(get_db)):
     query = {}
-    if category:
-        query["category"] = category
+    if category_id:
+        query["category_id"] = category_id
+    if level:
+        query["level"] = level
     courses = await db["courses"].find(query).to_list(length=100)
     return serialize_docs(courses)
 

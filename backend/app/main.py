@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import auth, categories, courses
+from app.api.routes import auth, categories, courses, sections
 
 app= FastAPI(title="WebCourse")
 
@@ -16,6 +16,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(categories.router)
 app.include_router(courses.router)
+app.include_router(sections.router)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
